@@ -40,11 +40,10 @@ public class Program
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
             builder.RegisterDependencies();
-
+            
             builder.Services.AddAutoMapper(
                 typeof(Program).Assembly,
-                typeof(ApplicationLayer).Assembly,
-                typeof(SaleMappingProfile).Assembly
+                typeof(ApplicationLayer).Assembly
             );
 
             builder.Services.AddMediatR(cfg =>
@@ -57,9 +56,11 @@ public class Program
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+            builder.Services.AddWebApiMappings();
+
             var app = builder.Build();
             app.UseMiddleware<ValidationExceptionMiddleware>();
-            app.UseMiddleware<KeyNotFoundExceptionMiddleware>();
+            app.UseMiddleware<ResourceNotFoundExceptionMiddleware>();
 
             if (app.Environment.IsDevelopment())
             {
@@ -78,6 +79,15 @@ public class Program
 
             app.Run();
         }
+        catch (AggregateException ex)
+        {
+            foreach (var inner in ex.InnerExceptions)
+            {
+                Console.WriteLine(inner.GetType().Name + ": " + inner.Message);
+                Console.WriteLine(inner.StackTrace);
+            }
+            throw;
+        }
         catch (Exception ex)
         {
             Log.Fatal(ex, "Application terminated unexpectedly");
@@ -86,5 +96,19 @@ public class Program
         {
             Log.CloseAndFlush();
         }
+    }
+}
+
+public static class ServiceCollectionExtensions
+{
+    public static void AddWebApiMappings(this IServiceCollection services)
+    {
+        services.AddAutoMapper(cfg =>
+        {
+            cfg.AddProfile<ProductMappingProfile>();
+            cfg.AddProfile<UserMappingProfile>();
+            cfg.AddProfile<SaleMappingProfile>();
+            cfg.AddProfile<CartMappingProfile>(); // Register Cart mapping
+        });
     }
 }

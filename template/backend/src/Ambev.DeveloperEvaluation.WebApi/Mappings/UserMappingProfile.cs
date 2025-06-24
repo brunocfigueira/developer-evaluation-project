@@ -15,10 +15,10 @@ namespace Ambev.DeveloperEvaluation.WebApi.Mappings
             CreateMap<CreateUserResult, CreateUserResponse>();
             CreateMap<GetUserResult, GetUserResponse>();
 
-            CreateMap<Guid, GetUserCommand>()
+            CreateMap<int, GetUserCommand>()
             .ConstructUsing(id => new GetUserCommand(id));
 
-            CreateMap<Guid, DeleteUserCommand>()
+            CreateMap<int, DeleteUserCommand>()
             .ConstructUsing(id => new DeleteUserCommand(id));
         }
     }

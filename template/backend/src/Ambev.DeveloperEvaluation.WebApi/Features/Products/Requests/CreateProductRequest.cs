@@ -16,6 +16,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Requests
         public decimal Price { get; set; }
 
         [Required(ErrorMessage = "A categoria é obrigatória.")]
+        [StringLength(100, ErrorMessage = "A categoria deve ter no máximo 100 caracteres.")]
         public string Category { get; set; } = string.Empty;
 
         [Url(ErrorMessage = "A imagem deve ser uma URL válida.")]

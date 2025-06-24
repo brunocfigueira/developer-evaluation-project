@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
 
@@ -16,7 +17,7 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand>
     {
         var exists = await _productRepository.ExistsAsync(request.Id, cancellationToken);
         if (!exists)
-            throw new KeyNotFoundException($"Product with ID {request.Id} not found");
+            throw new ResourceNotFoundException($"Product with ID {request.Id} not found");
 
         await _productRepository.DeleteAsync(request.Id, cancellationToken);
     }

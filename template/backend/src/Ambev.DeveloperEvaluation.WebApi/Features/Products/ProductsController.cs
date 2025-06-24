@@ -78,10 +78,6 @@ public class ProductsController : ControllerBase
     {
         var query = new GetProductByIdQuery { Id = id };
         var product = await _mediator.Send(query, cancellationToken);
-
-        if (product == null)
-            return NotFound(new { message = "Product not found" });
-
         var response = _mapper.Map<ProductResponse>(product);
         return Ok(response);
     }
@@ -115,11 +111,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var query = new GetProductByIdQuery { Id = id };
-        var product = await _mediator.Send(query, cancellationToken);
-        if (product == null)
-            return NotFound(new { message = "Product not found" });
-
+        
         var command = new DeleteProductCommand { Id = id };
         await _mediator.Send(command, cancellationToken);
 

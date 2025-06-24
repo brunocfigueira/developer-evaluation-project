@@ -22,6 +22,56 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.CartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -30,12 +80,10 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -47,8 +95,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
                     b.Property<string>("Image")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -64,6 +111,108 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Category = "Cervejas",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Cerveja Brahma Duplo Malte Lata 350ml - Pack com 12 unidades",
+                            Image = "https://www.ambev.com.br/images/products/brahma-duplo-malte-350ml.jpg",
+                            Price = 35.88m,
+                            Title = "Brahma Duplo Malte 350ml"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Category = "Cervejas Premium",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Cerveja Stella Artois Long Neck 275ml - Pack com 6 unidades",
+                            Image = "https://www.ambev.com.br/images/products/stella-artois-275ml.jpg",
+                            Price = 31.90m,
+                            Title = "Stella Artois 275ml"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Category = "Cervejas Premium",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Cerveja Corona Extra Long Neck 330ml - Pack com 6 unidades",
+                            Image = "https://www.ambev.com.br/images/products/corona-extra-330ml.jpg",
+                            Price = 39.90m,
+                            Title = "Corona Extra 330ml"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Category = "Refrigerantes",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Refrigerante Guaraná Antarctica 2L - Pack com 6 unidades",
+                            Image = "https://www.ambev.com.br/images/products/guarana-antarctica-2l.jpg",
+                            Price = 42.00m,
+                            Title = "Guaraná Antarctica 2L"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Category = "Refrigerantes",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Refrigerante Pepsi Lata 350ml - Pack com 12 unidades",
+                            Image = "https://www.ambev.com.br/images/products/pepsi-350ml.jpg",
+                            Price = 28.80m,
+                            Title = "Pepsi 350ml"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Category = "Águas Saborizadas",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Bebida H2OH! Limão 500ml - Pack com 6 unidades",
+                            Image = "https://www.ambev.com.br/images/products/h2oh-limao-500ml.jpg",
+                            Price = 24.00m,
+                            Title = "H2OH! Limão 500ml"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Category = "Isotônicos",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Isotônico Gatorade Laranja 500ml - Pack com 6 unidades",
+                            Image = "https://www.ambev.com.br/images/products/gatorade-laranja-500ml.jpg",
+                            Price = 32.90m,
+                            Title = "Gatorade Laranja 500ml"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Category = "Cervejas Premium",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Cerveja Budweiser Lata 350ml - Pack com 12 unidades",
+                            Image = "https://www.ambev.com.br/images/products/budweiser-350ml.jpg",
+                            Price = 47.88m,
+                            Title = "Budweiser 350ml"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Category = "Cervejas",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Cerveja Original Garrafa 600ml - Pack com 12 unidades",
+                            Image = "https://www.ambev.com.br/images/products/original-600ml.jpg",
+                            Price = 89.88m,
+                            Title = "Original 600ml"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Category = "Cervejas",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Cerveja Antarctica Sub Zero Lata 473ml - Pack com 12 unidades",
+                            Image = "https://www.ambev.com.br/images/products/antarctica-subzero-473ml.jpg",
+                            Price = 35.88m,
+                            Title = "Antarctica Sub Zero 473ml"
+                        });
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Sale", b =>
@@ -141,10 +290,11 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -184,7 +334,37 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Cart", b =>
+                {
+                    b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.CartItem", b =>
+                {
+                    b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.Cart", "Cart")
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SaleItem", b =>
@@ -193,6 +373,11 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         .WithMany("Items")
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Cart", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Sale", b =>

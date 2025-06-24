@@ -30,7 +30,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, int>
             Image = request.Image
         };
 
-        await _productRepository.AddAsync(product, cancellationToken);
-        return product.Id;
+        var created = await _productRepository.AddAsync(product, cancellationToken);
+        return created.Id;
     }
 }
