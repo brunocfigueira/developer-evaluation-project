@@ -16,7 +16,9 @@ public class CartRepository : ICartRepository
 
     public async Task<Cart?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == id);
+        return await _context.Carts.Include(c => c.Items)
+                                    .Include(c => c.User)
+                                    .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<IEnumerable<Cart>> GetCartsByUserIdAsync(int userId, CancellationToken cancellationToken = default)
@@ -39,7 +41,7 @@ public class CartRepository : ICartRepository
         _context.Carts.Update(cart);
         await _context.SaveChangesAsync(cancellationToken);
         return cart;
-    }    
+    }
     public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _context.Carts.AnyAsync(p => p.Id == id, cancellationToken);
@@ -78,13 +80,13 @@ public class CartRepository : ICartRepository
                 else if (trimmed.StartsWith("date", StringComparison.OrdinalIgnoreCase))
                 {
                     query = trimmed.EndsWith("desc", StringComparison.OrdinalIgnoreCase)
-                        ? query.OrderByDescending(p => (p.UpdatedAt != null)? p.UpdatedAt: p.CreatedAt)
+                        ? query.OrderByDescending(p => (p.UpdatedAt != null) ? p.UpdatedAt : p.CreatedAt)
                         : query.OrderBy(p => (p.UpdatedAt != null) ? p.UpdatedAt : p.CreatedAt);
                 }
                 else if (trimmed.StartsWith("status", StringComparison.OrdinalIgnoreCase))
                 {
                     query = trimmed.EndsWith("desc", StringComparison.OrdinalIgnoreCase)
-                        ? query.OrderByDescending(p =>  p.Status)
+                        ? query.OrderByDescending(p => p.Status)
                         : query.OrderBy(p => p.Status);
                 }
             }

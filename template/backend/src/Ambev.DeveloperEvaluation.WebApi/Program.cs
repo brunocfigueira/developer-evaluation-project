@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application;
+using Ambev.DeveloperEvaluation.Application.Checkout.OrderConfirmed;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
@@ -9,6 +10,9 @@ using Ambev.DeveloperEvaluation.WebApi.Mappings;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Rebus.Config;
+using Rebus.Routing.TypeBased;
+using Rebus.Transport.InMem;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -40,7 +44,7 @@ public class Program
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
             builder.RegisterDependencies();
-            
+
             builder.Services.AddAutoMapper(
                 typeof(Program).Assembly,
                 typeof(ApplicationLayer).Assembly
@@ -57,6 +61,8 @@ public class Program
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             builder.Services.AddWebApiMappings();
+            builder.Services.AutoRegisterHandlersFromAssemblyOf<OrderConfirmedHandler>();
+            builder.Services.ConfigureRebus();
 
             var app = builder.Build();
             app.UseMiddleware<ValidationExceptionMiddleware>();
@@ -79,6 +85,9 @@ public class Program
             app.MapControllers();
 
             app.Run();
+
+            var rebus = app.Services.GetRequiredService<IBusStarter>();
+            rebus.Start();
         }
         catch (AggregateException ex)
         {
@@ -109,7 +118,19 @@ public static class ServiceCollectionExtensions
             cfg.AddProfile<ProductMappingProfile>();
             cfg.AddProfile<UserMappingProfile>();
             cfg.AddProfile<SaleMappingProfile>();
-            cfg.AddProfile<CartMappingProfile>(); // Register Cart mapping
+            cfg.AddProfile<CartMappingProfile>();
         });
+    }
+
+    public static void ConfigureRebus(this IServiceCollection services)
+    {
+        services.AddRebus(cfg => cfg
+     .Transport(t => t.UseInMemoryTransport(new InMemNetwork(), "order-confirmation-queue"))
+     .Routing(r =>
+     {
+         r.TypeBased()
+          .Map<OrderConfirmedMessage>("order-confirmation-queue"); 
+     })
+ );
     }
 }

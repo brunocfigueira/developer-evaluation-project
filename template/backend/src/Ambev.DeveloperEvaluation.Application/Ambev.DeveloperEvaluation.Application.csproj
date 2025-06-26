@@ -14,6 +14,7 @@
     <PackageReference Include="Bogus" Version="35.6.3" />    
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="OneOf" Version="3.0.271" />
+    <PackageReference Include="Rebus.ServiceProvider" Version="10.3.0" />
   </ItemGroup>
 
 </Project>
