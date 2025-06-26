@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProducts;
 
-public class GetProductsByCategoryQuery : IRequest<(List<Product> Items, int TotalCount)>
+public class GetProductsByCategoryCommand : IRequest<(List<Product> Items, int TotalCount)>
 {
     public string Category { get; set; } = string.Empty;
     public int Page { get; set; } = 1;

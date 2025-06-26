@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProducts;
 
-public class GetProductsHandler : IRequestHandler<GetProductsQuery, (List<Product> Items, int TotalCount)>
+public class GetProductsHandler : IRequestHandler<GetProductsCommand, (List<Product> Items, int TotalCount)>
 {
     private readonly IProductRepository _productRepository;
 
@@ -13,7 +13,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, (List<Produc
         _productRepository = productRepository;
     }
 
-    public async Task<(List<Product> Items, int TotalCount)> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    public async Task<(List<Product> Items, int TotalCount)> Handle(GetProductsCommand request, CancellationToken cancellationToken)
     {
         return await _productRepository.GetAllAsync(request.Page, request.PageSize, request.Order, cancellationToken);
     }

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProduct;
 
-public class GetProductByIdQuery : IRequest<Product?>
+public class GetProductByIdCommand : IRequest<Product?>
 {
     public int Id { get; set; }
 }

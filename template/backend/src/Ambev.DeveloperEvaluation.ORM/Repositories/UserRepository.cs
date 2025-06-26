@@ -72,4 +72,8 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
+    public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Users.AnyAsync(p => p.Id == id, cancellationToken);
+    }
 }

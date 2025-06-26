@@ -35,7 +35,7 @@ public class ProductsController : ControllerBase
     {
         var command = _mapper.Map<CreateProductCommand>(request);
         var productId = await _mediator.Send(command, cancellationToken);
-        var query = new GetProductByIdQuery { Id = productId };
+        var query = new GetProductByIdCommand { Id = productId };
         var product = await _mediator.Send(query, cancellationToken);
         if (product == null)
             return NotFound(new { message = "Product not found after creation" });
@@ -54,7 +54,7 @@ public class ProductsController : ControllerBase
         [FromQuery(Name = "_order")] string? order = null,
         CancellationToken cancellationToken = default)
     {
-        var query = new GetProductsQuery { Page = page, PageSize = pageSize, Order = order };
+        var query = new GetProductsCommand { Page = page, PageSize = pageSize, Order = order };
         var (items, totalCount) = await _mediator.Send(query, cancellationToken);
         var products = _mapper.Map<List<ProductResponse>>(items);
         var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -76,7 +76,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var query = new GetProductByIdQuery { Id = id };
+        var query = new GetProductByIdCommand { Id = id };
         var product = await _mediator.Send(query, cancellationToken);
         var response = _mapper.Map<ProductResponse>(product);
         return Ok(response);
@@ -92,7 +92,7 @@ public class ProductsController : ControllerBase
     {
         var command = _mapper.Map<UpdateProductCommand>(request);
         command.Id = id;
-        var query = new GetProductByIdQuery { Id = id };
+        var query = new GetProductByIdCommand { Id = id };
         var product = await _mediator.Send(query, cancellationToken);
         if (product == null)
             return NotFound(new { message = "Product not found" });
@@ -125,7 +125,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
     {
-        var categories = await _mediator.Send(new GetProductCategoriesQuery(), cancellationToken);
+        var categories = await _mediator.Send(new GetProductCategoriesCommand(), cancellationToken);
         return Ok(categories);
     }
 
@@ -141,7 +141,7 @@ public class ProductsController : ControllerBase
         [FromQuery(Name = "_order")] string? order = null,
         CancellationToken cancellationToken = default)
     {
-        var query = new GetProductsByCategoryQuery
+        var query = new GetProductsByCategoryCommand
         {
             Category = category,
             Page = page,

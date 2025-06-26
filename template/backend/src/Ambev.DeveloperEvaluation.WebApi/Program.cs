@@ -60,6 +60,7 @@ public class Program
 
             var app = builder.Build();
             app.UseMiddleware<ValidationExceptionMiddleware>();
+            app.UseMiddleware<BusinessRuleExceptionMiddleware>();
             app.UseMiddleware<ResourceNotFoundExceptionMiddleware>();
 
             if (app.Environment.IsDevelopment())

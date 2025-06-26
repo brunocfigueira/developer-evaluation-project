@@ -19,7 +19,7 @@ public class ProductMappingProfile : Profile
         CreateMap<Product, ProductResponse>()
             .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => new ProductRatingResponse
             {
-                Rate = 0, // Placeholder, update if rating logic is added
+                Rate = 0, 
                 Count = 0
             }));
     }
