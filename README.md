@@ -16,13 +16,15 @@ cd developer-evaluation-project/template/backend
    - Navigate to the `appsettings.json` file in the `Ambev.DeveloperEvaluation.WebApi` project.
    - Update the `ConnectionStrings` section with your PostgreSQL database credentials.
 
-3. Start the required containers using Docker Compose:docker-compose up -d   This command will start the following services as defined in `docker-compose.yml`:
+3. Start the required containers using Docker Compose:
+   - **run**: 'docker-compose up -d' (This command will start the following services as defined in `docker-compose.yml`):
    - **ambev.developerevaluation.webapi**: The main Web API application (ports 8080, 8081)
    - **ambev.developerevaluation.database**: PostgreSQL database (port 5432)
    - **ambev.developerevaluation.nosql**: MongoDB NoSQL database (port 27017)
    - **ambev.developerevaluation.cache**: Redis cache (port 6379)
 
-4. Apply database migrations:dotnet ef database update --project src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj --startup-project src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj
+4. Apply database migrations:
+   - **run**: 'dotnet ef database update --project src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj --startup-project src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj'
 ## Running the Project
 
 1. Navigate to the Web API project directory:cd src/Ambev.DeveloperEvaluation.WebApi
@@ -57,9 +59,12 @@ To execute a complete sale, follow these steps using the API endpoints (see Swag
 ## Testing the Project
 
 ### Unit Tests
-To run unit tests, navigate to the `tests/Ambev.DeveloperEvaluation.Unit` directory and execute:dotnet test### Integration Tests
-To run integration tests, navigate to the `tests/Ambev.DeveloperEvaluation.Integration` directory and execute:dotnet test### Functional Tests
-To run functional tests, navigate to the `tests/Ambev.DeveloperEvaluation.Functional` directory and execute:dotnet test
+1. To run unit tests, navigate to the `tests/Ambev.DeveloperEvaluation.Unit` directory and execute:
+   - 'dotnet test' 
+2. To run integration tests, navigate to the `tests/Ambev.DeveloperEvaluation.Integration` directory and execute:
+   - 'dotnet test' 
+3. To run functional tests, navigate to the `tests/Ambev.DeveloperEvaluation.Functional` directory and execute:
+   - 'dotnet test'
 ## Key Features
 - User management with roles and permissions.
 - Product catalog with CRUD operations.
