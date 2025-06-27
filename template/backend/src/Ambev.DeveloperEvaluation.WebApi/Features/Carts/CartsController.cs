@@ -74,7 +74,7 @@ public class CartsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPatch("{id}/Send/Checkout/")]    
+    [HttpPatch("{id}/StartCheckout")]    
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ChangeStatusToCheckout(int id, CancellationToken cancellationToken)

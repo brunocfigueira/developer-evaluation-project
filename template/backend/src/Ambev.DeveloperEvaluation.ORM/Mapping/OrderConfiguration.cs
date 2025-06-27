@@ -9,7 +9,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         builder.HasKey(o => o.Id);
-        builder.Property(o => o.Id).HasColumnType("uuid").HasDefaultValueSql("gen_random_uuid()");
+        builder.Property(c => c.Id).ValueGeneratedOnAdd();
         builder.Property(o => o.CartId).IsRequired();
         builder.Property(o => o.Status)
             .HasConversion<string>()

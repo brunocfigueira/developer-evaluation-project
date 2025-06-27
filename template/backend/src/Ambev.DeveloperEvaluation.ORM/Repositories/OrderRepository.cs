@@ -18,10 +18,10 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             _context = context;
         }
 
-        public async Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Order?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.Orders.Include(c => c.Cart)
-                                        .FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Orders.Include(c => c.Cart)                                                                                
+                                        .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
         public async Task<Order> AddAsync(Order Order, CancellationToken cancellationToken = default)

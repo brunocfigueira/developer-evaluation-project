@@ -4,7 +4,7 @@ namespace Ambev.DeveloperEvaluation.Application.Orders.CreateOrder
 {
     public class CreateOrderResult
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public int CartId { get; set; }
         public string BranchName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }

@@ -10,7 +10,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
         public CartStatus Status { get; set; }       
         public DateTime CreatedAt { get; set; } 
         public DateTime? UpdatedAt { get; set; }
-        public ICollection<UpdateCartItemsResult> Items { get; set; } = new List<UpdateCartItemsResult>();
+        public IEnumerable<UpdateCartItemsResult> Items { get; set; } = [];
     }
     public class UpdateCartItemsResult
     {

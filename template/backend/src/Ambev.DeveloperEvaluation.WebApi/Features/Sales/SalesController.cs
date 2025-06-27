@@ -1,11 +1,8 @@
+using Ambev.DeveloperEvaluation.Application.Sales.GetSalesPaginated;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.Responses;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Ambev.DeveloperEvaluation.WebApi.Common;
-using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
-using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
-using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
@@ -22,45 +19,25 @@ public class SalesController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateSaleRequest request, CancellationToken cancellationToken)
-    {
-        var command = _mapper.Map<CreateSaleCommand>(request);
-        var saleId = await _mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = saleId }, new ApiResponseWithData<Guid> { Success = true, Data = saleId });
-    }
-
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetSaleByPaginated(
+        [FromQuery(Name = "_page")] int page = 1,
+        [FromQuery(Name = "_size")] int pageSize = 10,
+        [FromQuery(Name = "_order")] string? order = null,
+        CancellationToken cancellationToken = default)
     {
-        var sales = await _mediator.Send(new GetAllSalesQuery(), cancellationToken);
-        var response = _mapper.Map<List<SaleResponse>>(sales);
-        return Ok(new ApiResponseWithData<List<SaleResponse>> { Success = true, Data = response });
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
-    {
-        var sale = await _mediator.Send(new GetSaleQuery { Id = id }, cancellationToken);
-        if (sale == null)
-            return NotFound(new ApiResponse { Success = false, Message = "Sale not found" });
-        var response = _mapper.Map<SaleResponse>(sale);
-        return Ok(new ApiResponseWithData<SaleResponse> { Success = true, Data = response });
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSaleRequest request, CancellationToken cancellationToken)
-    {
-        var command = _mapper.Map<UpdateSaleCommand>(request);
-        command.Id = id;
-        await _mediator.Send(command, cancellationToken);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
-    {
-        await _mediator.Send(new DeleteSaleCommand { Id = id }, cancellationToken);
-        return NoContent();
+        var command = new GetSalesPaginatedCommand { Page = page, PageSize = pageSize, Order = order };
+        var (items, totalCount) = await _mediator.Send(command, cancellationToken);
+        var sales = _mapper.Map<IEnumerable<SaleResponse>>(items);
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        var response = new
+        {
+            data = sales,
+            totalItems = totalCount,
+            currentPage = page,
+            totalPages
+        };
+        return Ok(response);
     }
 }

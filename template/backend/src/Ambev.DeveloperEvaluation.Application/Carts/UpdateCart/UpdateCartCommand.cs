@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Application.Carts.GetCartsPaginated;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using MediatR;
 
@@ -8,7 +9,7 @@ public class UpdateCartCommand : IRequest<UpdateCartResult>
     public int Id { get; set; }
     public int UserId { get; set; }
     public DateTime UpdatedAt { get; set; }    
-    public ICollection<UpdateCartItemsCommand> Items { get; set; } = new List<UpdateCartItemsCommand>();
+    public IEnumerable<UpdateCartItemsCommand> Items { get; set; } = new List<UpdateCartItemsCommand>();
 }
 
 public class UpdateCartItemsCommand

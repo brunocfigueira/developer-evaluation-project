@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Application.Checkout.OrderConfirmed;
+using Ambev.DeveloperEvaluation.Application.Checkout.SaleConfirmed;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
@@ -61,7 +62,6 @@ public class Program
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             builder.Services.AddWebApiMappings();
-            builder.Services.AutoRegisterHandlersFromAssemblyOf<OrderConfirmedHandler>();
             builder.Services.ConfigureRebus();
 
             var app = builder.Build();
@@ -98,6 +98,13 @@ public class Program
             }
             throw;
         }
+        catch (InvalidOperationException ex)
+        {
+
+            Console.WriteLine(ex.GetType().Name + ": " + ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            throw;
+        }
         catch (Exception ex)
         {
             Log.Fatal(ex, "Application terminated unexpectedly");
@@ -124,13 +131,32 @@ public static class ServiceCollectionExtensions
 
     public static void ConfigureRebus(this IServiceCollection services)
     {
-        services.AddRebus(cfg => cfg
-     .Transport(t => t.UseInMemoryTransport(new InMemNetwork(), "order-confirmation-queue"))
-     .Routing(r =>
-     {
-         r.TypeBased()
-          .Map<OrderConfirmedMessage>("order-confirmation-queue"); 
-     })
- );
+        const string ORDER_QUEUE = "order-confirmation-queue";
+        const string SALE_QUEUE = "sale-confirmation-queue";
+
+        var orderNetwork = new InMemNetwork();
+        var saleNetwork = new InMemNetwork();
+
+        // Bus primário para pedidos
+        services.AddRebus(
+            (configure, provider) => configure
+                .Transport(t => t.UseInMemoryTransport(orderNetwork, ORDER_QUEUE))
+                .Routing(r => r.TypeBased().Map<OrderConfirmedMessage>(ORDER_QUEUE))
+                .Options(o => o.SetNumberOfWorkers(1)),
+            key: "order-confirmation",
+            isDefaultBus: true
+        );
+        services.AddRebusHandler<OrderConfirmedHandler>();
+
+        // Bus secundário para vendas
+        services.AddRebus(
+            (configure, provider) => configure
+                .Transport(t => t.UseInMemoryTransport(saleNetwork, SALE_QUEUE))
+                .Routing(r => r.TypeBased().Map<SaleConfirmedMessage>(SALE_QUEUE))
+                .Options(o => o.SetNumberOfWorkers(1)),
+            key: "sale-confirmation",
+            isDefaultBus: false
+        );              
+        services.AddRebusHandler<SaleConfirmedHandler>();
     }
 }

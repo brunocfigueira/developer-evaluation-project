@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+﻿using Ambev.DeveloperEvaluation.Application.Carts.GetCartById;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.GetCarts
         public CartStatus Status { get; set; }      
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public ICollection<GetCartItemsByUserIdResult> Items { get; set; } = new List<GetCartItemsByUserIdResult>();
+        public IEnumerable<GetCartItemsByUserIdResult> Items { get; set; } = new List<GetCartItemsByUserIdResult>();
     }
     public class GetCartItemsByUserIdResult
     {

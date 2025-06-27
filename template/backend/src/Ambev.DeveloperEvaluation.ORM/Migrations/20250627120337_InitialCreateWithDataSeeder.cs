@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ambev.DeveloperEvaluation.ORM.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateWithProductSeeder : Migration
+    public partial class InitialCreateWithDataSeeder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,25 +34,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Sales",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    SaleNumber = table.Column<string>(type: "text", nullable: false),
-                    SaleDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientName = table.Column<string>(type: "text", nullable: false),
-                    BranchId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BranchName = table.Column<string>(type: "text", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    IsCancelled = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sales", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -70,30 +51,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SaleItems",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false),
-                    ProductName = table.Column<string>(type: "text", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    Discount = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
-                    Total = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    SaleId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SaleItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SaleItems_Sales_SaleId",
-                        column: x => x.SaleId,
-                        principalTable: "Sales",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -127,9 +84,9 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     CartId = table.Column<int>(type: "integer", nullable: false),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "numeric", nullable: false),
-                    Discount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Total = table.Column<decimal>(type: "numeric", nullable: false)
+                    UnitPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Discount = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    Total = table.Column<decimal>(type: "numeric(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -152,13 +109,14 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CartId = table.Column<int>(type: "integer", nullable: false),
                     CustomerName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     BranchName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     TotalAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
@@ -170,6 +128,61 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         principalTable: "Carts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sales",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SaleNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    CustomerName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    SaleDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    BranchName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    IsCancelled = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sales", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sales_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SaleItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SaleId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Discount = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    Total = table.Column<decimal>(type: "numeric(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SaleItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SaleItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SaleItems_Sales_SaleId",
+                        column: x => x.SaleId,
+                        principalTable: "Sales",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -187,6 +200,16 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     { 8, "Cervejas Premium", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Cerveja Budweiser Lata 350ml - Pack com 12 unidades", "https://www.ambev.com.br/images/products/budweiser-350ml.jpg", 47.88m, "Budweiser 350ml", null },
                     { 9, "Cervejas", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Cerveja Original Garrafa 600ml - Pack com 12 unidades", "https://www.ambev.com.br/images/products/original-600ml.jpg", 89.88m, "Original 600ml", null },
                     { 10, "Cervejas", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Cerveja Antarctica Sub Zero Lata 473ml - Pack com 12 unidades", "https://www.ambev.com.br/images/products/antarctica-subzero-473ml.jpg", 35.88m, "Antarctica Sub Zero 473ml", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "Password", "Phone", "Role", "Status", "UpdatedAt", "Username" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 6, 27, 12, 3, 36, 336, DateTimeKind.Utc).AddTicks(9910), "user.customer@ambev.com.br", "AQAAAAIAAYagAAAAELDlsJmD9BWJUhCLfBOmiQeSENGEFARlFshVJo9mcygDQoQFh0XRXsGUravrjsSfSw==", "99999999999", "Customer", "Active", null, "User.Customer" },
+                    { 2, new DateTime(2025, 6, 27, 12, 3, 36, 434, DateTimeKind.Utc).AddTicks(7169), "user.manager@ambev.com.br", "AQAAAAIAAYagAAAAEF8uDwFQsXZV5Gwwe15GWb9qWyZpgzLWMgDhUmv7BXrJLlS/YGwaydzn3EZ1vB6/xw==", "99999999999", "Manager", "Active", null, "User.Manager" },
+                    { 3, new DateTime(2025, 6, 27, 12, 3, 36, 582, DateTimeKind.Utc).AddTicks(8623), "user.admin@ambev.com.br", "AQAAAAIAAYagAAAAELp/iFXzZmlWAGU7pp4XOSeWDkUIr5evLTkJRWbblahmvzO4fntUOfJsg65C/7XuCA==", "99999999999", "Admin", "Active", null, "User.Admin" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -210,9 +233,19 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 column: "CartId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SaleItems_ProductId",
+                table: "SaleItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SaleItems_SaleId",
                 table: "SaleItems",
                 column: "SaleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sales_OrderId",
+                table: "Sales",
+                column: "OrderId");
         }
 
         /// <inheritdoc />
@@ -222,19 +255,19 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 name: "CartItems");
 
             migrationBuilder.DropTable(
-                name: "Orders");
-
-            migrationBuilder.DropTable(
                 name: "SaleItems");
 
             migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Carts");
+                name: "Sales");
 
             migrationBuilder.DropTable(
-                name: "Sales");
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Carts");
 
             migrationBuilder.DropTable(
                 name: "Users");

@@ -65,18 +65,12 @@ public class CartRepository : ICartRepository
             foreach (var part in order.Split(','))
             {
                 var trimmed = part.Trim();
-                if (trimmed.StartsWith("id", StringComparison.OrdinalIgnoreCase))
-                {
-                    query = trimmed.EndsWith("desc", StringComparison.OrdinalIgnoreCase)
-                        ? query.OrderByDescending(p => p.Id)
-                        : query.OrderBy(p => p.Id);
-                }
-                else if (trimmed.StartsWith("userId", StringComparison.OrdinalIgnoreCase))
+                if (trimmed.StartsWith("userId", StringComparison.OrdinalIgnoreCase))
                 {
                     query = trimmed.EndsWith("desc", StringComparison.OrdinalIgnoreCase)
                         ? query.OrderByDescending(p => p.UserId)
                         : query.OrderBy(p => p.UserId);
-                }
+                }                
                 else if (trimmed.StartsWith("date", StringComparison.OrdinalIgnoreCase))
                 {
                     query = trimmed.EndsWith("desc", StringComparison.OrdinalIgnoreCase)
@@ -93,7 +87,7 @@ public class CartRepository : ICartRepository
         }
         else
         {
-            query = query.OrderBy(p => p.UserId);
+            query = query.OrderBy(p => p.Id);
         }
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query

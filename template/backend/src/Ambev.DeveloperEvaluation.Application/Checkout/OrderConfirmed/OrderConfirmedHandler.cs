@@ -1,67 +1,112 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Application.Checkout.PaymentFlow;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Handlers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Rebus.ServiceProvider;
+using Serilog;
 
 namespace Ambev.DeveloperEvaluation.Application.Checkout.OrderConfirmed
 {
+
+    /// <summary>
+    /// Aqui é onde inicia diversos fluxos de processamento após a confirmação do pedido.
+    /// Vai depender de como a modelagem de negocio decide tratar cada fluxo
+    /// Segue apenas um exemplo de como poderia ser implementado.
+    /// </summary>
     public class OrderConfirmedHandler : IHandleMessages<OrderConfirmedMessage>
     {
-        private readonly IBus _bus;
-        private readonly ICartRepository _cartRepository;
+        private readonly IBusRegistry _busRegistry;
+        private readonly IMediator _mediator;
+        private readonly ILogger<OrderConfirmedHandler> _logger;
 
-        public OrderConfirmedHandler(IBus bus, ICartRepository cartRepository)
+        public OrderConfirmedHandler(IBusRegistry busRegistry, IMediator mediator, ILogger<OrderConfirmedHandler> logger)
         {
-            _bus = bus;
-            _cartRepository = cartRepository;
-
+            _busRegistry = busRegistry;
+            _mediator = mediator;
+            _logger = logger;
         }
         public async Task Handle(OrderConfirmedMessage message)
         {
-            Console.WriteLine($"Pedido confirmado: {message.OrderId} (Cart: {message.CartId}) em {message.CreatedAt}");
+            _logger.LogInformation("Event received OrderConfirmed: OrderId={OrderId}, CartId={CartId}, CreatedAt={CreatedAt}",
+               message.OrderId, message.CartId, message.CreatedAt);
 
-            var paymentOk = await SimulatePaymentProcessing(message.OrderId);
+            await StartPaymentFlow(message);
 
-            if (!paymentOk)
+            await StartOrderBillingFlow(message);
+
+            await StartProductStockUpdateFlow(message);
+
+            await StartLogisticsAndShippingFlow(message);
+
+            await StartCustomerNotificationFlow(message);
+        }
+
+        /// <summary>
+        ///   Start Payment Flow
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private async Task StartPaymentFlow(OrderConfirmedMessage message)
+        {
+            _logger.LogInformation("Starting the payment flow for the order {OrderId}", message.OrderId);
+
+            try
             {
-                Console.WriteLine($"Falha no processamento do pagamento para o pedido {message.OrderId}");
-                return;
+                // Inicia o fluxo de pagamento
+                var paymentCommand = new PaymentFlowCommand { CartId = message.CartId, OrderId = message.OrderId };
+                await _mediator.Send(paymentCommand);
+                _logger.LogInformation("Payment processed successfully for order {OrderId}", message.OrderId);                
             }
-
-            await ChangeCartStatusToCompleted(message.CartId);
-
-
-
-            // Aqui você pode acionar pagamento, envio de e-mail, etc.
-            await Task.Delay(500); // Simula processamento
-        }
-        private bool GenerateRandomBoolean()
-        {
-            Random random = new Random();
-            return random.Next(2) == 1; // Retorna true ou false aleatoriamente
-        }
-
-        private async Task<bool> SimulatePaymentProcessing(Guid orderId)
-        {
-            // Simula o processamento de pagamento
-            // Aqui você pode integrar com um serviço de pagamento real
-            await Task.Delay(500);
-            return GenerateRandomBoolean(); // Retorna true se o pagamento foi processado com sucesso
-        }
-
-        private async Task ChangeCartStatusToCompleted(int cartId)
-        {
-            var cart = await _cartRepository.GetByIdAsync(cartId);
-            if(cart != null)
+            catch (PaymentFailedException ex)
             {
-                cart.Status = CartStatus.Completed;
-                await _cartRepository.UpdateAsync(cart);
-            }         
+                // TODO: Implementar lógica de tratamento de falha de pagamento
+                // Aqui você pode enviar uma mensagem para uma fila de falhas ou registrar o erro em um log
+                _logger.LogInformation(ex.Message);                
+            }
+        }
+        private async Task StartOrderBillingFlow(OrderConfirmedMessage message)
+        {            
+            _logger.LogInformation("Starting Order Billing Flow");
+            //TODO: Implementar lógica de faturamento do pedido (registrar a venda propriamente dita)
+        }
+        private async Task StartProductStockUpdateFlow(OrderConfirmedMessage message)
+        {
+            // TODO: Implementar lógica de atualização de estoque de produtos
+            /**
+             * Redução da quantidade do produto no estoque.
+               - Verificação de itens esgotados.
+               - Atualização em tempo real (especialmente em grandes promoções).
+               - Gatilho para reabastecimento (quando atinge quantidade mínima).
+             */
+            _logger.LogInformation("Starting product stock update flow");
+        }
+
+        private async Task StartLogisticsAndShippingFlow(OrderConfirmedMessage message)
+        {
+            // TODO: Implementar lógica de logística e envio
+            /**
+             * Geração de ordem de separação (picking).
+               - Embalagem dos produtos (packing).
+               - Emissão de etiquetas de envio e nota fiscal.
+               - Integração com transportadora (Correios, Jadlog, Loggi, etc.).
+               - Atualização de status: Em Separação → Enviado → Em Trânsito → Entregue.
+             */
+            _logger.LogInformation("Starting Logistics and Shipping flow");
+        }
+
+        private async Task StartCustomerNotificationFlow(OrderConfirmedMessage message)
+        {
+            // TODO: Implementar lógica de notificação ao cliente
+            /**
+             * Envio de e-mail ou SMS de confirmação de pedido.
+               - Notificação de envio com código de rastreio.
+               - Atualizações sobre o status do pedido.
+               - Solicitação de feedback após a entrega.
+             */
+            _logger.LogInformation("Starting Customer Notification Flow");
         }
     }
 }

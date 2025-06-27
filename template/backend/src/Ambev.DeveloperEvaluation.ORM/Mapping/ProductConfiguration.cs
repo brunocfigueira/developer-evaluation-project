@@ -1,8 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
 
 namespace Ambev.DeveloperEvaluation.ORM.Mapping;
 
@@ -11,7 +9,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     private static readonly DateTime _baseDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
     public void Configure(EntityTypeBuilder<Product> builder)
-    {        
+    {
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id).ValueGeneratedOnAdd();
         builder.Property(p => p.Title).IsRequired().HasMaxLength(100);
@@ -22,9 +20,14 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.CreatedAt).IsRequired();
         builder.Property(p => p.UpdatedAt);
 
-        // Seed com dados iniciais
-        var products = new List<Product>
-        {
+        // Seed com dados iniciais        
+        builder.HasData(BuildInitialLoadData());
+    }
+
+    private static List<Product> BuildInitialLoadData()
+    {
+        return [
+
             new Product
             {
                 Id = 1,
@@ -135,8 +138,6 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
                 CreatedAt = _baseDate,
                 UpdatedAt = null
             }
-        };
-
-        builder.HasData(products);
+        ];
     }
 }

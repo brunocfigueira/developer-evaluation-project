@@ -1,6 +1,4 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
-using System;
-using System.Collections.Generic;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -12,7 +10,7 @@ public class Cart
     public required User User { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
-    public ICollection<CartItem> Items { get; set; } = new List<CartItem>();
+    public IEnumerable<CartItem> Items { get; set; } = new List<CartItem>();
 
     public decimal CalculateTotalAmount()
     {

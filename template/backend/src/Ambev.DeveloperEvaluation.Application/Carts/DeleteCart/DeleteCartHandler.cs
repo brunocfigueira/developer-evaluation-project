@@ -2,6 +2,7 @@
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.DeleteCart
 {
@@ -18,9 +19,16 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.DeleteCart
         {
             var exists = await _cartRepository.ExistsAsync(command.Id, cancellationToken);
             if (!exists)
-                throw new ResourceNotFoundException($"Cart with id {command.Id} not found");
+                throw new ResourceNotFoundException($"Cart with id {command.Id} not found");           
 
-            await _cartRepository.DeleteAsync(command.Id, cancellationToken);
+            try
+            {
+                await _cartRepository.DeleteAsync(command.Id, cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new BusinessRuleException($"Cart with id {command.Id} is currently in use and cannot be deleted.", ex);
+            }
         }
     }
 }

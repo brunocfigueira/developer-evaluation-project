@@ -1,184 +1,74 @@
---PORTUGUES
-# Projeto de Avaliação de Desenvolvedor
-
-`LEIA COM ATENÇÃO`
-
-## Instruções
-
-**O teste abaixo deverá ser entregue em até 7 dias corridos a partir da data de recebimento deste manual.**
-
-* O código deve ser versionado em um repositório público do Github e o link deve ser enviado para avaliação assim que estiver concluído.
-* Faça o upload deste template no seu repositório e comece a trabalhar a partir dele.
-* Leia as instruções com atenção e certifique-se de que todos os requisitos estão sendo atendidos.
-* O repositório deve fornecer instruções sobre como configurar, executar e testar o projeto.
-* A documentação e a organização geral também serão levadas em consideração.
-
-## Caso de Uso
-
-**Você é um desenvolvedor na equipe da DeveloperStore. Agora, precisamos implementar os protótipos da API.**
-
-Como trabalhamos com `DDD`, para referenciar entidades de outros domínios, utilizamos o padrão `External Identities` com desnormalização das descrições das entidades.
-
-Portanto, você irá escrever uma API (CRUD completo) que gerencia registros de vendas. A API precisa ser capaz de informar:
-
-* Número da venda
-* Data em que a venda foi realizada
-* Cliente
-* Valor total da venda
-* Filial onde a venda foi realizada
-* Produtos
-* Quantidades
-* Preços unitários
-* Descontos
-* Valor total de cada item
-* Cancelada/Não Cancelada
-
-Não é obrigatório, mas seria um diferencial construir código para publicar eventos de:
-
-* VendaCriada
-* VendaModificada
-* VendaCancelada
-* ItemCancelado
-
-Caso você escreva o código, **não é necessário** publicar para nenhum Message Broker. Você pode registrar uma mensagem no log da aplicação ou de qualquer outra forma que achar mais conveniente.
-
-### Regras de Negócio
-
-* Compras acima de 4 itens idênticos têm 10% de desconto
-* Compras entre 10 e 20 itens idênticos têm 20% de desconto
-* Não é possível vender mais de 20 itens idênticos
-* Compras abaixo de 4 itens não podem ter desconto
-
-Essas regras de negócio definem faixas de desconto baseadas na quantidade e limitações:
-
-1. Faixas de Desconto:
-
-   * 4+ itens: 10% de desconto
-   * 10-20 itens: 20% de desconto
-
-2. Restrições:
-
-   * Limite máximo: 20 itens por produto
-   * Não são permitidos descontos para quantidades abaixo de 4 itens
-
-## Visão Geral
-
-Esta seção fornece uma visão geral de alto nível do projeto e as diversas habilidades e competências que ele visa avaliar para os candidatos a desenvolvedor.
-
-Veja [Visão Geral](/.doc/overview.md)
-
-## Tecnologia Utilizada
-
-Esta seção lista as principais tecnologias usadas no projeto, incluindo os componentes de backend, testes, frontend e banco de dados.
-
-Veja [Tecnologia Utilizada](/.doc/tech-stack.md)
-
-## Frameworks
-
-Esta seção descreve os frameworks e bibliotecas que são utilizados no projeto para melhorar a produtividade e a manutenibilidade do desenvolvimento.
-
-Veja [Frameworks](/.doc/frameworks.md)
-
-<!-- 
-## Estrutura da API
-Esta seção inclui links para a documentação detalhada dos diferentes recursos da API:
-- [API Geral](./docs/general-api.md)
-- [API de Produtos](/.doc/products-api.md)
-- [API de Carrinhos](/.doc/carts-api.md)
-- [API de Usuários](/.doc/users-api.md)
-- [API de Autenticação](/.doc/auth-api.md)
--->
-
-## Estrutura do Projeto
-
-Esta seção descreve a estrutura geral e a organização dos arquivos e diretórios do projeto.
-
-Veja [Estrutura do Projeto](/.doc/project-structure.md)
-
---ENGLISH
-# Developer Evaluation Project
-
-`READ CAREFULLY`
-
-## Instructions
-**The test below will have up to 7 calendar days to be delivered from the date of receipt of this manual.**
-
-- The code must be versioned in a public Github repository and a link must be sent for evaluation once completed
-- Upload this template to your repository and start working from it
-- Read the instructions carefully and make sure all requirements are being addressed
-- The repository must provide instructions on how to configure, execute and test the project
-- Documentation and overall organization will also be taken into consideration
-
-## Use Case
-**You are a developer on the DeveloperStore team. Now we need to implement the API prototypes.**
-
-As we work with `DDD`, to reference entities from other domains, we use the `External Identities` pattern with denormalization of entity descriptions.
-
-Therefore, you will write an API (complete CRUD) that handles sales records. The API needs to be able to inform:
-
-* Sale number
-* Date when the sale was made
-* Customer
-* Total sale amount
-* Branch where the sale was made
-* Products
-* Quantities
-* Unit prices
-* Discounts
-* Total amount for each item
-* Cancelled/Not Cancelled
-
-It's not mandatory, but it would be a differential to build code for publishing events of:
-* SaleCreated
-* SaleModified
-* SaleCancelled
-* ItemCancelled
-
-If you write the code, **it's not required** to actually publish to any Message Broker. You can log a message in the application log or however you find most convenient.
-
-### Business Rules
-
-* Purchases above 4 identical items have a 10% discount
-* Purchases between 10 and 20 identical items have a 20% discount
-* It's not possible to sell above 20 identical items
-* Purchases below 4 items cannot have a discount
-
-These business rules define quantity-based discounting tiers and limitations:
-
-1. Discount Tiers:
-   - 4+ items: 10% discount
-   - 10-20 items: 20% discount
-
-2. Restrictions:
-   - Maximum limit: 20 items per product
-   - No discounts allowed for quantities below 4 items
+# Ambev Developer Evaluation Project
 
 ## Overview
-This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
+This project is a backend solution for managing e-commerce operations, including user management, product catalog, checkout, and order processing. It is built using .NET 8 and follows a modular architecture.
 
-See [Overview](/.doc/overview.md)
+## Prerequisites
+- .NET 8 SDK
+- Docker installed on your operating system ([Download Docker Desktop](https://www.docker.com/products/docker-desktop/))
+- A terminal or command-line interface
 
-## Tech Stack
-This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
+## Setup Instructions
 
-See [Tech Stack](/.doc/tech-stack.md)
+1. Clone the repository:git clone <https://github.com/brunocfigueira/developer-evaluation-project.git>
+cd developer-evaluation-project/template/backend
+2. Configure the database connection string:
+   - Navigate to the `appsettings.json` file in the `Ambev.DeveloperEvaluation.WebApi` project.
+   - Update the `ConnectionStrings` section with your PostgreSQL database credentials.
 
-## Frameworks
-This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
+3. Start the required containers using Docker Compose:docker-compose up -d   This command will start the following services as defined in `docker-compose.yml`:
+   - **ambev.developerevaluation.webapi**: The main Web API application (ports 8080, 8081)
+   - **ambev.developerevaluation.database**: PostgreSQL database (port 5432)
+   - **ambev.developerevaluation.nosql**: MongoDB NoSQL database (port 27017)
+   - **ambev.developerevaluation.cache**: Redis cache (port 6379)
 
-See [Frameworks](/.doc/frameworks.md)
+4. Apply database migrations:dotnet ef database update --project src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj --startup-project src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj
+## Running the Project
 
-<!-- 
-## API Structure
-This section includes links to the detailed documentation for the different API resources:
-- [API General](./docs/general-api.md)
-- [Products API](/.doc/products-api.md)
-- [Carts API](/.doc/carts-api.md)
-- [Users API](/.doc/users-api.md)
-- [Auth API](/.doc/auth-api.md)
--->
+1. Navigate to the Web API project directory:cd src/Ambev.DeveloperEvaluation.WebApi
+2. Run the application:dotnet run
+3. The API will be available at `http://localhost:7181` by default.
 
-## Project Structure
-This section describes the overall structure and organization of the project files and directories. 
+## API Documentation
+- The Swagger UI for testing the API is available at: [https://localhost:7181/swagger/index.html](https://localhost:7181/swagger/index.html)
 
-See [Project Structure](/.doc/project-structure.md)
+## Main Sales Flow
+To execute a complete sale, follow these steps using the API endpoints (see Swagger for details):
+
+1. **Create a User**
+   - Endpoint: `POST /api/Users`
+   - Register a new user with the required information.
+2. **Create Products**
+   - Endpoint: `POST /api/Products`
+   - Add one or more products to the catalog.
+3. **Create a Shopping Cart**
+   - Endpoint: `POST /api/Carts`
+   - Create a cart and add products to it.
+4. **Send Cart to Checkout**
+   - Endpoint: `POST /api/Carts/{id}/StartCheckout`
+   - Initiate the checkout process for the cart.
+5. **Confirm the Order**
+   - Endpoint: `POST /api/Checkout/ConfirmOrder`
+   - Confirm the order and trigger payment and fulfillment flows.
+6. **Search Consolidated Sales**
+   - Endpoint: `GET /api/Sales` (or similar, see Swagger for the exact route)
+   - Retrieve a list of completed sales/orders.
+
+## Testing the Project
+
+### Unit Tests
+To run unit tests, navigate to the `tests/Ambev.DeveloperEvaluation.Unit` directory and execute:dotnet test### Integration Tests
+To run integration tests, navigate to the `tests/Ambev.DeveloperEvaluation.Integration` directory and execute:dotnet test### Functional Tests
+To run functional tests, navigate to the `tests/Ambev.DeveloperEvaluation.Functional` directory and execute:dotnet test
+## Key Features
+- User management with roles and permissions.
+- Product catalog with CRUD operations.
+- Checkout process with order confirmation.
+- Modular architecture for scalability.
+
+## Additional Notes
+- Ensure Docker is running and all containers are healthy before applying migrations or starting the application.
+- Use tools like Postman or Swagger to test the API endpoints interactively.
+
+## Contribution
+Feel free to fork the repository and submit pull requests for any improvements or bug fixes.

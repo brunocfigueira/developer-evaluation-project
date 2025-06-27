@@ -10,7 +10,7 @@ public class CreateCartCommand : IRequest<CreateCartResult>
     public int UserId { get; set; }
     public DateTime CreatedAt { get; set; }
     public CartStatus Status { get; set; } = CartStatus.Open;
-    public ICollection<CreateCartItemsCommand> Items { get; set; } = new List<CreateCartItemsCommand>();
+    public IEnumerable<CreateCartItemsCommand> Items { get; set; } = new List<CreateCartItemsCommand>();
 }
 
 public class CreateCartItemsCommand

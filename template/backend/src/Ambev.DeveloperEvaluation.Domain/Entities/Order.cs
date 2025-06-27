@@ -3,8 +3,9 @@ using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
-    public class Order : BaseEntity
+    public class Order 
     {       
+        public int Id { get; set; }
         public int CartId { get; set; }
         public Cart? Cart { get; set; }
         public string CustomerName { get; set; } = string.Empty;

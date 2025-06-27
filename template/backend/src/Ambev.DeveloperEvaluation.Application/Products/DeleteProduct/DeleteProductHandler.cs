@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 
@@ -17,8 +18,14 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand>
     {
         var exists = await _productRepository.ExistsAsync(request.Id, cancellationToken);
         if (!exists)
-            throw new ResourceNotFoundException($"Product with ID {request.Id} not found");
-
-        await _productRepository.DeleteAsync(request.Id, cancellationToken);
+            throw new ResourceNotFoundException($"Product with id {request.Id} not found");
+        try
+        {
+            await _productRepository.DeleteAsync(request.Id, cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+           throw new BusinessRuleException($"Product with id {request.Id} is currently in use and cannot be deleted.", ex);
+        }
     }
 }
