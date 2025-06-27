@@ -74,6 +74,7 @@ To execute a complete sale, follow these steps using the API endpoints (see Swag
 ## Additional Notes
 - Ensure Docker is running and all containers are healthy before applying migrations or starting the application.
 - Use tools like Postman or Swagger to test the API endpoints interactively.
+- Log records are in the `src\Ambev.DeveloperEvaluation.WebApi\logs` directory
 
 ## Contribution
 Feel free to fork the repository and submit pull requests for any improvements or bug fixes.
